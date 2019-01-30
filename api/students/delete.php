@@ -1,5 +1,7 @@
 <?php
     include_once '../../config/Constants.php';
+    include_once '../../config/Token.php';
+    include_once '../../config/core.php';
     include_once '../../config/Database.php';
     include_once '../../model/Students.php';
     header(Constants::$Origin);
@@ -10,10 +12,18 @@
     $std = new Students($conn);
 
     $std->id = isset($_GET['id']) ? $_GET['id'] : die();
-    $std->id = htmlspecialchars_decode(strip_tags($std->id));
+    $token = isset($_GET['token']) ? $_GET['token'] : '';
+    $auth = Token::Authenticate($token,$key,$alg);
+    
+    if($auth){
+        $std->id = htmlspecialchars_decode(strip_tags($std->id));
 
-    if($std->Delete()){
-        echo json_encode(array('message'=>'Student Record Deleted','errors'=>$std->errors));
+        if($std->Delete()){
+            echo json_encode(array('message'=>'Student Record Deleted','errors'=>$std->errors));
+        }else{
+            echo json_encode(array('message'=>'Delete Action Failed','errors'=>$std->errors));
+        }
     }else{
-        echo json_encode(array('message'=>'Delete Action Failed','errors'=>$std->errors));
+        http_response_code(401);
+        echo json_encode(array('message'=>'Authentication is Required For This Action'));
     }
