@@ -13,7 +13,11 @@
     $database = new Database();
     $conn = $database->Connect();
     $std = new Students($conn);
-    $token = isset($_GET['token']) ? $_GET['token'] : '';
+    
+    $headers = apache_request_headers();
+    $jwt = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+    $remove_bearer = explode("Bearer ",$jwt);
+    $token = $remove_bearer[1];
     $auth = Token::Authenticate($token,$key,$alg);
 
     if($auth){

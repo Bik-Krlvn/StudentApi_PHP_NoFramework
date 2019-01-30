@@ -112,13 +112,25 @@ class Students  implements IDataAccess
         $this->email     = htmlspecialchars_decode(strip_tags($this->email));
         $this->id        = htmlspecialchars_decode(strip_tags($this->id));
 
-        if ($stmt->execute([':id'=>$this->id,':firstname'=>$this->firstname,':lastname'=>$this->lastname,':email'=>$this->email])) {
-            # code...
-            return true;
-        }
-        printf('Error: %s.\n',$stmt->error);
-        $this->errors = $stmt->error;
-        return false;
+        $this->errors = array();
+
+        if(!empty($this->id)){
+            $stmt->bindParam(':id',$this->id);
+        }else{$this->errors['ID'] = "Required";}
+        
+        if(!empty($this->firstname)){
+           $stmt->bindParam(':firstname',$this->firstname);
+        }else{$this->errors['Firstname'] = "Can't Be Null";}
+
+        if(!empty($this->lastname)){
+            $stmt->bindParam(':lastname',$this->lastname);
+        }else{$this->errors['Lastname'] = "Can't Be Null";}
+
+        if(!empty($this->email)){
+            $stmt->bindParam(':email',$this->email);
+        }else{$this->errors['Email'] = "Can't Be Null";}
+
+        return $stmt;
     }
 
     public function Delete()

@@ -10,6 +10,7 @@
     $data = json_decode(file_get_contents('php://input'));
     $token = isset($data->token) ? $data->token : die();
 
+
     if($token){
         $decode = Token::DecodeToken($token,$key,$alg);
         if ($decode == null) return;
