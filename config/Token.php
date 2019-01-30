@@ -49,4 +49,20 @@ class Token
        }
        return $encode;
    }
+
+   public static function Authenticate($token,$key,$alg)
+   {
+       # code...
+       if($token){
+          try {
+              //code...
+              $decode = JWT::decode($token,$key,$alg);
+              if($decode) return true;
+          } catch (Exception $e) {
+              //throw $th;
+             printf($e->getMessage());
+          }
+       }
+       return false;
+   }
 }
